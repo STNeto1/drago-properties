@@ -1,6 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs/app-beta'
 import { Inter as FontSans } from 'next/font/google'
 
+import { Providers } from '~/components/Providers'
 import { cn } from '~/lib/utils'
 import './globals.css'
 
@@ -29,7 +30,9 @@ export default function RootLayout({
     >
       <head />
       <ClerkProvider>
-        <body className="min-h-screen">{children}</body>
+        <Providers>
+          <body className="min-h-screen">{children}</body>
+        </Providers>
       </ClerkProvider>
     </html>
   )

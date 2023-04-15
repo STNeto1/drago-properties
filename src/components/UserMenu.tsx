@@ -1,5 +1,6 @@
 import { useAuth } from '@clerk/nextjs'
 import { AvatarProps } from '@radix-ui/react-avatar'
+import Link from 'next/link'
 import { FC, HTMLAttributes } from 'react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/Avatar'
@@ -58,13 +59,13 @@ export const UserMenu: FC<UserMenuProps> = (props) => {
           </div>
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/sell">Sell</Link>
+        </DropdownMenuItem>
         {/* <DropdownMenuItem asChild>
-          <Link href="/dashboard">Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
           <Link href="/dashboard/billing">Billing</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
+        </DropdownMenuItem> */}
+        {/* <DropdownMenuItem asChild>
           <Link href="/dashboard/settings">Settings</Link>
         </DropdownMenuItem> */}
         <DropdownMenuSeparator />

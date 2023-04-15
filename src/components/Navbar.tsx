@@ -2,7 +2,7 @@
 
 import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
-import { useSelectedLayoutSegment } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { ReactNode, useState } from 'react'
 import { buttonVariants } from '~/components/Button'
 import { Icons } from '~/components/Icons'
@@ -24,8 +24,8 @@ export const navItems: Array<NavItem> = [
   },
   {
     title: 'Sell',
-    href: '#',
-    disabled: true
+    href: '/sell',
+    disabled: false
   },
   {
     title: 'Discover',
@@ -40,11 +40,11 @@ export const navItems: Array<NavItem> = [
 ]
 
 type NavbarProps = {
-  children: ReactNode | ReactNode[]
+  children?: ReactNode | ReactNode[]
 }
 
 export const Navbar = (props: NavbarProps) => {
-  const segment = useSelectedLayoutSegment()
+  const pathname = usePathname()
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false)
 
   const { isSignedIn, user } = useUser()
@@ -66,8 +66,11 @@ export const Navbar = (props: NavbarProps) => {
               href={item.disabled ? '#' : item.href}
               className={cn(
                 'flex items-center text-lg font-semibold text-slate-600 sm:text-sm',
-                item.href.startsWith(`/${segment}`) && 'text-slate-900',
-                item.disabled && 'cursor-not-allowed opacity-80'
+                {
+                  'text-slate-900 border-b-2 border-slate-900':
+                    item.href === pathname,
+                  'cursor-not-allowed opacity-80': item.disabled
+                }
               )}
             >
               {item.title}
