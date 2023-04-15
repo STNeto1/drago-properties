@@ -15,11 +15,14 @@ import {
 } from '~/components/Select'
 import { Textarea } from '~/components/Textarea'
 import { useLocation } from '~/hooks/use-location'
+import { useMoney } from '~/lib/use-money'
 
 export const SellForm = () => {
   return (
     <div>
-      <SellForm_1 />
+      {/* <SellForm_1 /> */}
+
+      <SellForm_2 />
     </div>
   )
 }
@@ -262,6 +265,85 @@ const SellForm_1 = () => {
         </div>
 
         <div className="mt-6">
+          <Button className="w-full h-12">Continue</Button>
+        </div>
+      </section>
+    </section>
+  )
+}
+
+const SellForm_2 = () => {
+  const price = useMoney()
+  const condominium = useMoney()
+  const iptu = useMoney()
+
+  return (
+    <section className="w-1/2 mx-auto">
+      <div>
+        <h3 className="mt-8 scroll-m-20 text-2xl font-semibold tracking-tight">
+          What is the price?
+        </h3>
+
+        <p className="leading-7 [&:not(:first-child)]:mt-2">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
+        </p>
+      </div>
+
+      <section className="mt-8">
+        <div className="grid grid-cols-3 gap-x-2 gap-y-6">
+          <div className="relative col-span-1">
+            <Label htmlFor="value">[Sale | Rent] value</Label>
+            <div className="flex items-center">
+              <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                $
+              </span>
+              <Input
+                id="value"
+                type="text"
+                className="rounded-l-none"
+                value={price.value}
+                onChange={(e) => price.setValue(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="relative col-span-1">
+            <Label htmlFor="condominium">Condominium</Label>
+            <div className="flex items-center">
+              <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                $
+              </span>
+              <Input
+                id="condominium"
+                type="text"
+                className="rounded-l-none"
+                value={condominium.value}
+                onChange={(e) => condominium.setValue(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="relative col-span-1">
+            <Label htmlFor="iptu">IPTU</Label>
+            <div className="flex items-center">
+              <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                $
+              </span>
+              <Input
+                id="iptu"
+                type="text"
+                className="rounded-l-none"
+                value={iptu.value}
+                onChange={(e) => iptu.setValue(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex items-center gap-4">
+          <Button variant={'outline'} className="w-full h-12">
+            Go back
+          </Button>
           <Button className="w-full h-12">Continue</Button>
         </div>
       </section>
