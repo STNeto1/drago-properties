@@ -1,9 +1,11 @@
 'use client'
 
 import { MinusIcon, PlusIcon } from 'lucide-react'
-import { ReactNode, useState } from 'react'
+import Image from 'next/image'
+import { ReactNode, useMemo, useState } from 'react'
 import { Button } from '~/components/Button'
 import { Divider } from '~/components/Divider'
+import { Icons } from '~/components/Icons'
 import { Input } from '~/components/Input'
 import { Label } from '~/components/Label'
 import {
@@ -22,7 +24,9 @@ export const SellForm = () => {
     <div>
       {/* <SellForm_1 /> */}
 
-      <SellForm_2 />
+      {/* <SellForm_2 /> */}
+
+      <SellForm_3 />
     </div>
   )
 }
@@ -345,6 +349,93 @@ const SellForm_2 = () => {
             Go back
           </Button>
           <Button className="w-full h-12">Continue</Button>
+        </div>
+      </section>
+    </section>
+  )
+}
+
+const SellForm_3 = () => {
+  const [files, setFiles] = useState<File[]>([])
+
+  const imagePreviews = useMemo(() => {
+    return files.map((file) => URL.createObjectURL(file))
+  }, [files])
+
+  return (
+    <section className="w-1/2 mx-auto">
+      <div>
+        <h3 className="mt-8 scroll-m-20 text-2xl font-semibold tracking-tight">
+          Now add some photos
+        </h3>
+      </div>
+
+      <section className="mt-8">
+        <div className="flex items-center justify-center w-full">
+          <label
+            htmlFor="dropzone-file"
+            className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <Icons.upload className="w-8 h-8 text-gray-400" />
+              <p className="font-semibold mb-2 text-sm text-gray-500 dark:text-gray-400">
+                Click to upload
+              </p>
+            </div>
+            <input
+              id="dropzone-file"
+              type="file"
+              className="hidden"
+              multiple
+              onChange={(e) => {
+                if (e.target.files) {
+                  setFiles((prev) => [
+                    ...prev,
+                    ...Array.from(e.target.files ?? [])
+                  ])
+                }
+              }}
+            />
+          </label>
+        </div>
+
+        <ul
+          role="list"
+          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
+        >
+          {imagePreviews.map((file, idx) => (
+            <li key={file} className="relative">
+              <div className="aspect-w-1 aspect-h-1 rounded-md bg-gray-100 overflow-hidden group-hover:opacity-75">
+                <Image
+                  src={file}
+                  alt=""
+                  className="object-center object-cover"
+                  width={640}
+                  height={480}
+                />
+              </div>
+              <div className="absolute top-2 right-2">
+                <Button
+                  variant={'destructive'}
+                  size={'xs'}
+                  onClick={() => {
+                    setFiles((prev) => prev.filter((_, i) => i !== idx))
+                  }}
+                >
+                  <Icons.trash className="w-4 h-4" />
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-6 flex items-center gap-4">
+          <Button variant={'outline'} className="w-full h-12">
+            Go back
+          </Button>
+          <Button className="w-full h-12" disabled={files.length === 0}>
+            Continue
+          </Button>
         </div>
       </section>
     </section>

@@ -18,6 +18,7 @@ import {
   Settings,
   Trash,
   Twitter,
+  UploadCloudIcon,
   User,
   X,
   type Icon as LucideIcon
@@ -44,6 +45,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
+  upload: UploadCloudIcon,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
