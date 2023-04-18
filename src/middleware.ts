@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
 // Set the paths that don't require the user to be signed in
-const publicPaths = ['/', '/sign-in*', '/sell']
+const publicPaths = ['/', '/sign-in*']
 
 const isPublic = (path: string) => {
   return publicPaths.find((x) =>
@@ -41,6 +41,7 @@ export const config = {
      * - public folder
      */
     '/((?!static|.*\\..*|_next|favicon.ico).*)',
+    '/api/:path*',
     '/'
   ]
 }

@@ -24,6 +24,8 @@ import { properties } from '~/db/schema'
 import { useLocation } from '~/hooks/use-location'
 import { useCreatePropertyStore } from '~/lib/create-property-store'
 import { useMoney } from '~/lib/use-money'
+import { trpc } from '~/trpc/client'
+import { createPropertySchema } from '~/trpc/schemas'
 
 export const SellForm = () => {
   const currentStep = useCreatePropertyStore((state) => state.step)
@@ -556,6 +558,24 @@ const SellForm_3 = () => {
   }, [files])
 
   const previousStep = useCreatePropertyStore((state) => state.previousStep)
+  const formData = useCreatePropertyStore((state) => state.data)
+
+  const createPropertyMutation = trpc.property.create.useMutation()
+
+  const onSubmit = async () => {
+    const sanitized = createPropertySchema.safeParse({
+      ...formData,
+      photos: []
+    })
+    if (!sanitized.success) {
+      alert('Invalid data')
+      console.log(sanitized.error)
+
+      return
+    }
+
+    createPropertyMutation.mutateAsync(sanitized.data)
+  }
 
   return (
     <section className="w-1/2 mx-auto">
@@ -632,7 +652,11 @@ const SellForm_3 = () => {
           >
             Go back
           </Button>
-          <Button className="w-full h-12" disabled={files.length === 0}>
+          <Button
+            className="w-full h-12"
+            disabled={files.length === 0}
+            onClick={onSubmit}
+          >
             Continue
           </Button>
         </div>
