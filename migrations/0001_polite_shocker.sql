@@ -1,0 +1,1 @@
+ALTER TABLE properties ADD `created_at` timestamp(2) DEFAULT (now()) NOT NULL;

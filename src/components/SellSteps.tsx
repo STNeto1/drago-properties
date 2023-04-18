@@ -1,16 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useCreatePropertyStore } from '~/lib/create-property-store'
 import { cn } from '~/lib/utils'
 
 const steps = [
-  { id: 'step_1', name: 'Details' },
-  { id: 'step_2', name: 'Pricing' },
-  { id: 'step_3', name: 'Medias' }
+  { id: 1, name: 'Details' },
+  { id: 2, name: 'Pricing' },
+  { id: 3, name: 'Medias' }
 ] as const
 
 export const SellSteps = () => {
-  const [currentStep] = useState(steps[0].id)
+  const currentStep = useCreatePropertyStore((state) => state.step)
 
   return (
     <nav aria-label="Progress">

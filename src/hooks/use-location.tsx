@@ -31,6 +31,6 @@ export const useLocation = ({ postalCode }: Props) => {
         complement: 'Some'
       }
     },
-    enabled: postalCode.length === 9
+    enabled: postalCode?.length === 9
   })
 }

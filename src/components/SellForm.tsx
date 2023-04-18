@@ -1,12 +1,16 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { MinusIcon, PlusIcon } from 'lucide-react'
 import Image from 'next/image'
-import { ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 import { Button } from '~/components/Button'
 import { Divider } from '~/components/Divider'
 import { Icons } from '~/components/Icons'
 import { Input } from '~/components/Input'
+import { InputErrorMessage } from '~/components/InputErrorMessage'
 import { Label } from '~/components/Label'
 import {
   Select,
@@ -16,34 +20,112 @@ import {
   SelectValue
 } from '~/components/Select'
 import { Textarea } from '~/components/Textarea'
+import { properties } from '~/db/schema'
 import { useLocation } from '~/hooks/use-location'
+import { useCreatePropertyStore } from '~/lib/create-property-store'
 import { useMoney } from '~/lib/use-money'
 
 export const SellForm = () => {
+  const currentStep = useCreatePropertyStore((state) => state.step)
+
   return (
     <div>
-      {/* <SellForm_1 /> */}
-
-      {/* <SellForm_2 /> */}
-
-      <SellForm_3 />
+      {currentStep === 1 && <SellForm_1 />}
+      {currentStep === 2 && <SellForm_2 />}
+      {currentStep === 3 && <SellForm_3 />}
     </div>
   )
 }
 
-const propertyTypes = [
+const propertyTypes: Array<{
+  id: typeof properties.propertyType.enumValues[number]
+  name: string
+}> = [
   { id: 'house', name: 'House' },
   { id: 'apartment', name: 'Apartment' },
   { id: 'land', name: 'Land' },
   { id: 'commercial', name: 'Commercial' },
   { id: 'other', name: 'Other' }
-] as const
+]
+
+const firstFormSchema = z.object({
+  advertisementType: z.enum(properties.advertisementType.enumValues),
+  propertyType: z.enum(properties.propertyType.enumValues),
+
+  title: z.string().min(5).max(100),
+  description: z.string().min(5).max(1000),
+
+  postalCode: z.string().length(9),
+  state: z.string().max(100),
+  city: z.string().max(100),
+  district: z.string().max(100),
+  street: z.string().max(100),
+  streetNumber: z.string().min(1).max(100),
+  complement: z.optional(z.string().min(1).max(100)),
+
+  usefulArea: z.coerce.number().min(1).max(100000),
+  totalArea: z.coerce.number().min(1).max(100000),
+  bedrooms: z.number().min(1).max(100),
+  bathrooms: z.number().min(1).max(100),
+  parkingSpaces: z.number().min(1).max(100),
+  suites: z.number().min(1).max(100)
+})
+type FirstForm = z.infer<typeof firstFormSchema>
 
 const SellForm_1 = () => {
-  const [type, setType] = useState<string>('sell')
+  const nextStep = useCreatePropertyStore((state) => state.nextStep)
+  const setData = useCreatePropertyStore((state) => state.setData)
 
-  const [postalCode, setPostalCode] = useState<string>('111111111')
-  const locationQuery = useLocation({ postalCode })
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+    setValue,
+    watch
+  } = useForm<FirstForm>({
+    resolver: zodResolver(firstFormSchema)
+  })
+  const onSubmit = (data: FirstForm) => {
+    setData({
+      advertisementType: data.advertisementType,
+      propertyType: data.propertyType,
+      bathrooms: data.bathrooms,
+      bedrooms: data.bedrooms,
+      city: data.city,
+      complement: data.complement,
+      description: data.description,
+      district: data.district,
+      parkingSpaces: data.parkingSpaces,
+      postalCode: data.postalCode,
+      state: data.state,
+      street: data.street,
+      streetNumber: data.streetNumber,
+      suites: data.suites,
+      title: data.title,
+      totalArea: data.totalArea,
+      usefulArea: data.usefulArea
+    })
+
+    nextStep()
+  }
+
+  const locationQuery = useLocation({
+    postalCode: watch('postalCode')
+  })
+
+  useEffect(() => {
+    if (!locationQuery.data) {
+      return
+    }
+
+    setValue('state', locationQuery.data.state)
+    setValue('city', locationQuery.data.city)
+    setValue('district', locationQuery.data.district)
+    setValue('street', locationQuery.data.street)
+    setValue('streetNumber', locationQuery.data.number)
+    setValue('complement', locationQuery.data.complement)
+  }, [locationQuery, setValue])
 
   return (
     <section className="w-1/2 mx-auto">
@@ -58,28 +140,70 @@ const SellForm_1 = () => {
         </p>
       </div>
 
-      <section className="flex flex-col gap-8 pt-20">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-8 pt-20"
+      >
         <div>
           <FormSectionTitle>What do you wish to do?</FormSectionTitle>
 
-          <div className="flex items-center gap-4 pt-4">
+          <div className="flex items-center gap-4 pt-4 pb-2">
             <Button
+              type="button"
               size={'lg'}
               className={'px-8'}
-              variant={type === 'sell' ? 'default' : 'subtle'}
-              onClick={() => setType('sell')}
+              variant={
+                watch('advertisementType') === 'sell' ? 'default' : 'subtle'
+              }
+              onClick={() => setValue('advertisementType', 'sell')}
             >
               <span className="text-sm font-medium">Sell</span>
             </Button>
 
             <Button
+              type="button"
               size={'lg'}
               className={'px-8'}
-              variant={type === 'rent' ? 'default' : 'subtle'}
-              onClick={() => setType('rent')}
+              variant={
+                watch('advertisementType') === 'rent' ? 'default' : 'subtle'
+              }
+              onClick={() => setValue('advertisementType', 'rent')}
             >
               <span className="text-sm font-medium">Rent</span>
             </Button>
+          </div>
+          <InputErrorMessage message={errors.advertisementType?.message} />
+        </div>
+
+        <div className="grid gap-4">
+          <FormSectionTitle>
+            Give us some information about the ad
+          </FormSectionTitle>
+
+          <div className="grid grid-cols-4 gap-x-2 gap-y-6">
+            <div className="col-span-4">
+              <Label htmlFor="title">Title</Label>
+              <div className="flex flex-col">
+                <Input
+                  id="title"
+                  type="text"
+                  className=""
+                  placeholder="Ex: House with 3 bedrooms"
+                  {...register('title')}
+                />
+                <InputErrorMessage message={errors.title?.message} />
+              </div>
+            </div>
+
+            <div className="col-span-4">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Describe the property in a few words"
+                {...register('description')}
+              />
+              <InputErrorMessage message={errors.description?.message} />
+            </div>
           </div>
         </div>
 
@@ -87,7 +211,12 @@ const SellForm_1 = () => {
           <FormSectionTitle>What is the type of property?</FormSectionTitle>
 
           <div className="pt-4">
-            <Select>
+            <Select
+              value={getValues('propertyType')}
+              onValueChange={(
+                value: typeof properties.propertyType.enumValues[number]
+              ) => setValue('propertyType', value)}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
@@ -99,6 +228,8 @@ const SellForm_1 = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            <InputErrorMessage message={errors.propertyType?.message} />
           </div>
         </div>
 
@@ -114,19 +245,11 @@ const SellForm_1 = () => {
               autoComplete="postalCode"
               autoCorrect="off"
               placeholder="00000-000"
-              defaultValue={postalCode}
-              value={postalCode}
-              onChange={(e) => {
-                if (e.target.value.length <= 9) {
-                  setPostalCode(e.target.value)
-                }
-              }}
+              maxLength={9}
+              {...register('postalCode')}
             />
-            {locationQuery.isError && (
-              <p className="px-1 text-xs text-red-600">
-                {locationQuery.error.message}
-              </p>
-            )}
+            <InputErrorMessage message={locationQuery.error?.message} />
+            <InputErrorMessage message={errors.postalCode?.message} />
           </div>
 
           {locationQuery.isSuccess && (
@@ -136,9 +259,10 @@ const SellForm_1 = () => {
                 <Input
                   id="city"
                   type="text"
-                  defaultValue={locationQuery.data.city}
+                  value={locationQuery.data.city}
                   readOnly
                 />
+                <InputErrorMessage message={errors.postalCode?.message} />
               </div>
 
               <div className="col-span-1">
@@ -146,9 +270,10 @@ const SellForm_1 = () => {
                 <Input
                   id="state"
                   type="text"
-                  defaultValue={locationQuery.data.state}
+                  value={locationQuery.data.state}
                   readOnly
                 />
+                <InputErrorMessage message={errors.state?.message} />
               </div>
 
               <div className="col-span-1">
@@ -156,9 +281,10 @@ const SellForm_1 = () => {
                 <Input
                   id="district"
                   type="text"
-                  defaultValue={locationQuery.data.district}
+                  value={locationQuery.data.district}
                   readOnly
                 />
+                <InputErrorMessage message={errors.district?.message} />
               </div>
 
               <div className="col-span-4">
@@ -166,9 +292,10 @@ const SellForm_1 = () => {
                 <Input
                   id="street"
                   type="text"
-                  defaultValue={locationQuery.data.street}
+                  value={locationQuery.data.street}
                   readOnly
                 />
+                <InputErrorMessage message={errors.street?.message} />
               </div>
 
               <div className="col-span-2">
@@ -176,9 +303,10 @@ const SellForm_1 = () => {
                 <Input
                   id="number"
                   type="text"
-                  defaultValue={locationQuery.data.number}
+                  value={locationQuery.data.number}
                   readOnly
                 />
+                <InputErrorMessage message={errors.streetNumber?.message} />
               </div>
 
               <div className="col-span-2">
@@ -186,9 +314,10 @@ const SellForm_1 = () => {
                 <Input
                   id="complement"
                   type="text"
-                  defaultValue={locationQuery.data.complement}
+                  value={locationQuery.data.complement}
                   readOnly
                 />
+                <InputErrorMessage message={errors.complement?.message} />
               </div>
             </div>
           )}
@@ -204,82 +333,134 @@ const SellForm_1 = () => {
                 <Input
                   id="usefulArea"
                   type="number"
-                  defaultValue={'10'}
                   className="rounded-r-none"
+                  {...register('usefulArea')}
                 />
                 <span className="inline-flex items-center px-3 h-10 rounded-r-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
                   m²
                 </span>
               </div>
+              <InputErrorMessage message={errors.usefulArea?.message} />
             </div>
 
             <div className="col-span-2">
-              <Label htmlFor="usefulArea">Total Area</Label>
+              <Label htmlFor="totalArea">Total Area</Label>
               <div className="flex items-center">
                 <Input
                   id="totalArea"
                   type="number"
-                  defaultValue={'10'}
                   className="rounded-r-none"
+                  {...register('totalArea')}
                 />
                 <span className="inline-flex items-center px-3 h-10 rounded-r-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
                   m²
                 </span>
               </div>
+              <InputErrorMessage message={errors.totalArea?.message} />
             </div>
 
             <div className="col-span-4">
               <div className="flex flex-col gap-y-4">
-                <QuantitySelector
-                  title="Bedrooms"
-                  subtitle="How many bedrooms does the property have?"
-                />
+                <div className="flex flex-col">
+                  <QuantitySelector
+                    title="Bedrooms"
+                    subtitle="How many bedrooms does the property have?"
+                    initialValue={0}
+                    setValue={(value) => setValue('bedrooms', value)}
+                  />
+                  <InputErrorMessage message={errors.bedrooms?.message} />
+                </div>
 
                 <Divider />
 
-                <QuantitySelector
-                  title="Bathrooms"
-                  subtitle="How many bathrooms does the property have?"
-                />
+                <div className="flex flex-col">
+                  <QuantitySelector
+                    title="Bathrooms"
+                    subtitle="How many bathrooms does the property have?"
+                    initialValue={0}
+                    setValue={(value) => setValue('bathrooms', value)}
+                  />
+                  <InputErrorMessage message={errors.bathrooms?.message} />
+                </div>
 
                 <Divider />
 
-                <QuantitySelector
-                  title="Suites"
-                  subtitle="How many suites does the property have?"
-                />
+                <div className="flex flex-col">
+                  <QuantitySelector
+                    title="Suites"
+                    subtitle="How many suites does the property have?"
+                    initialValue={0}
+                    setValue={(value) => setValue('suites', value)}
+                  />
+                  <InputErrorMessage message={errors.suites?.message} />
+                </div>
 
                 <Divider />
 
-                <QuantitySelector
-                  title="Parking Spaces"
-                  subtitle="How many parking spaces does the property have?"
-                />
+                <div className="flex flex-col">
+                  <QuantitySelector
+                    title="Parking Spaces"
+                    subtitle="How many parking spaces does the property have?"
+                    initialValue={0}
+                    setValue={(value) => setValue('parkingSpaces', value)}
+                  />
+                  <InputErrorMessage message={errors.parkingSpaces?.message} />
+                </div>
               </div>
-            </div>
-
-            <div className="col-span-4">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe the property in a few words"
-              />
             </div>
           </div>
         </div>
 
         <div className="mt-6">
-          <Button className="w-full h-12">Continue</Button>
+          <Button type="submit" className="w-full h-12">
+            Continue
+          </Button>
         </div>
-      </section>
+      </form>
     </section>
   )
 }
 
+const secondFormSchema = z.object({
+  price: z.number().min(1).max(1000000000),
+  condominium: z.optional(z.number().min(0).max(1000000000)),
+  iptu: z.optional(z.number().min(0).max(1000000000))
+})
+type SecondForm = z.infer<typeof secondFormSchema>
+
 const SellForm_2 = () => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm<SecondForm>({
+    resolver: zodResolver(secondFormSchema)
+  })
+
   const price = useMoney()
   const condominium = useMoney()
   const iptu = useMoney()
+
+  useEffect(() => {
+    setValue('price', price.clean)
+    setValue('condominium', condominium.clean)
+    setValue('iptu', iptu.clean)
+  }, [price, condominium, iptu, setValue])
+
+  const nextStep = useCreatePropertyStore((state) => state.nextStep)
+  const previousStep = useCreatePropertyStore((state) => state.previousStep)
+  const formData = useCreatePropertyStore((state) => state.data)
+  const setFormData = useCreatePropertyStore((state) => state.setData)
+
+  const onSubmit = (data: SecondForm) => {
+    setFormData({
+      price: data.price,
+      condominium: data.condominium,
+      iptu: data.iptu
+    })
+    nextStep()
+  }
 
   return (
     <section className="w-1/2 mx-auto">
@@ -293,10 +474,12 @@ const SellForm_2 = () => {
         </p>
       </div>
 
-      <section className="mt-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
         <div className="grid grid-cols-3 gap-x-2 gap-y-6">
           <div className="relative col-span-1">
-            <Label htmlFor="value">[Sale | Rent] value</Label>
+            <Label htmlFor="value">
+              {formData.advertisementType === 'rent' ? 'Rent' : 'Sale'} value
+            </Label>
             <div className="flex items-center">
               <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
                 $
@@ -309,6 +492,7 @@ const SellForm_2 = () => {
                 onChange={(e) => price.setValue(e.target.value)}
               />
             </div>
+            <InputErrorMessage message={errors.price?.message} />
           </div>
 
           <div className="relative col-span-1">
@@ -325,6 +509,7 @@ const SellForm_2 = () => {
                 onChange={(e) => condominium.setValue(e.target.value)}
               />
             </div>
+            <InputErrorMessage message={errors.condominium?.message} />
           </div>
 
           <div className="relative col-span-1">
@@ -341,16 +526,24 @@ const SellForm_2 = () => {
                 onChange={(e) => iptu.setValue(e.target.value)}
               />
             </div>
+            <InputErrorMessage message={errors.iptu?.message} />
           </div>
         </div>
 
         <div className="mt-6 flex items-center gap-4">
-          <Button variant={'outline'} className="w-full h-12">
+          <Button
+            type="button"
+            variant={'outline'}
+            className="w-full h-12"
+            onClick={() => previousStep()}
+          >
             Go back
           </Button>
-          <Button className="w-full h-12">Continue</Button>
+          <Button type="submit" className="w-full h-12">
+            Continue
+          </Button>
         </div>
-      </section>
+      </form>
     </section>
   )
 }
@@ -361,6 +554,8 @@ const SellForm_3 = () => {
   const imagePreviews = useMemo(() => {
     return files.map((file) => URL.createObjectURL(file))
   }, [files])
+
+  const previousStep = useCreatePropertyStore((state) => state.previousStep)
 
   return (
     <section className="w-1/2 mx-auto">
@@ -430,7 +625,11 @@ const SellForm_3 = () => {
         </ul>
 
         <div className="mt-6 flex items-center gap-4">
-          <Button variant={'outline'} className="w-full h-12">
+          <Button
+            variant={'outline'}
+            className="w-full h-12"
+            onClick={() => previousStep()}
+          >
             Go back
           </Button>
           <Button className="w-full h-12" disabled={files.length === 0}>
@@ -450,8 +649,17 @@ const FormSectionTitle = (props: { children: ReactNode }) => {
   )
 }
 
-const QuantitySelector = (props: { title: string; subtitle: string }) => {
-  const [quantity, setQuantity] = useState<number>(0)
+const QuantitySelector = (props: {
+  title: string
+  subtitle: string
+  initialValue: number
+  setValue: (val: number) => void
+}) => {
+  const [quantity, setQuantity] = useState<number>(props.initialValue)
+
+  useEffect(() => {
+    props.setValue(quantity)
+  }, [quantity, props])
 
   return (
     <div className="flex items-center justify-between w-full">
@@ -463,6 +671,7 @@ const QuantitySelector = (props: { title: string; subtitle: string }) => {
 
       <div className="flex items-center gap-4">
         <Button
+          type="button"
           size={'sm'}
           variant={'subtle'}
           className="h-8 w-8"
@@ -475,6 +684,7 @@ const QuantitySelector = (props: { title: string; subtitle: string }) => {
         <span className="text-sm font-semibold">{quantity}</span>
 
         <Button
+          type="button"
           size={'sm'}
           variant={'subtle'}
           className="h-8 w-8"

@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1681783075610,
+      "tag": "0000_early_thunderbolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1681783130232,
+      "tag": "0001_polite_shocker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1681783190096,
+      "tag": "0002_uneven_sleepwalker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1681786558107,
+      "tag": "0003_amused_maria_hill",
+      "breakpoints": true
+    }
+  ]
+}
