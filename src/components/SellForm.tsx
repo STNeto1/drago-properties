@@ -561,6 +561,7 @@ const SellForm_3 = () => {
   const formData = useCreatePropertyStore((state) => state.data)
 
   const createPropertyMutation = trpc.property.create.useMutation()
+  const createPresignedUrlsMutation = trpc.s3.createSignedUrls.useMutation()
 
   const onSubmit = async () => {
     const sanitized = createPropertySchema.safeParse({
@@ -574,7 +575,24 @@ const SellForm_3 = () => {
       return
     }
 
-    createPropertyMutation.mutateAsync(sanitized.data)
+    const presignedUrls = await createPresignedUrlsMutation.mutateAsync(
+      files.map((f) => f.name)
+    )
+
+    const uploadPromises = files.map((file) => {
+      const result = presignedUrls[file.name]
+
+      return fetch(result.completeUrl, {
+        method: 'PUT',
+        body: file
+      })
+    })
+    await Promise.all(uploadPromises)
+
+    createPropertyMutation.mutateAsync({
+      ...sanitized.data,
+      photos: Object.values(presignedUrls).map((p) => p.url)
+    })
   }
 
   return (

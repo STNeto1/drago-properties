@@ -23,6 +23,7 @@ export const properties = mysqlTable('properties', {
 
   title: varchar('title', { length: 100 }).notNull(),
   description: text('description').notNull(),
+  slug: varchar('slug', { length: 100 }).notNull(),
 
   postalCode: varchar('postal_code', { length: 10 }).notNull(),
   state: varchar('state', { length: 50 }).notNull(),

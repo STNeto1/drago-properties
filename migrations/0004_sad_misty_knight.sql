@@ -1,0 +1,1 @@
+ALTER TABLE properties ADD `slug` varchar(100) NOT NULL;
