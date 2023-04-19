@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { MinusIcon, PlusIcon } from 'lucide-react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -551,8 +552,9 @@ const SellForm_2 = () => {
 }
 
 const SellForm_3 = () => {
-  const [files, setFiles] = useState<File[]>([])
+  const router = useRouter()
 
+  const [files, setFiles] = useState<File[]>([])
   const imagePreviews = useMemo(() => {
     return files.map((file) => URL.createObjectURL(file))
   }, [files])
@@ -560,7 +562,11 @@ const SellForm_3 = () => {
   const previousStep = useCreatePropertyStore((state) => state.previousStep)
   const formData = useCreatePropertyStore((state) => state.data)
 
-  const createPropertyMutation = trpc.property.create.useMutation()
+  const createPropertyMutation = trpc.property.create.useMutation({
+    onSuccess: ({ slug }) => {
+      router.push(`/dashboard/advertisements/${slug}`)
+    }
+  })
   const createPresignedUrlsMutation = trpc.s3.createSignedUrls.useMutation()
 
   const onSubmit = async () => {
@@ -667,12 +673,20 @@ const SellForm_3 = () => {
             variant={'outline'}
             className="w-full h-12"
             onClick={() => previousStep()}
+            disabled={
+              createPropertyMutation.isLoading ||
+              createPresignedUrlsMutation.isLoading
+            }
           >
             Go back
           </Button>
           <Button
             className="w-full h-12"
-            disabled={files.length === 0}
+            disabled={
+              files.length === 0 ||
+              createPropertyMutation.isLoading ||
+              createPresignedUrlsMutation.isLoading
+            }
             onClick={onSubmit}
           >
             Continue

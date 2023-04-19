@@ -60,11 +60,13 @@ export const UserMenu: FC<UserMenuProps> = (props) => {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
+          <Link href="/dashboard">Dashboard</Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
           <Link href="/sell">Sell</Link>
         </DropdownMenuItem>
-        {/* <DropdownMenuItem asChild>
-          <Link href="/dashboard/billing">Billing</Link>
-        </DropdownMenuItem> */}
+
         {/* <DropdownMenuItem asChild>
           <Link href="/dashboard/settings">Settings</Link>
         </DropdownMenuItem> */}

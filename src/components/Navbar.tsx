@@ -18,9 +18,9 @@ export type NavItem = {
 
 export const navItems: Array<NavItem> = [
   {
-    title: 'Buy',
-    href: '#',
-    disabled: true
+    title: 'Dashboard',
+    href: '/dashboard',
+    disabled: false
   },
   {
     title: 'Sell',
@@ -29,11 +29,6 @@ export const navItems: Array<NavItem> = [
   },
   {
     title: 'Discover',
-    href: '#',
-    disabled: true
-  },
-  {
-    title: 'Advertise',
     href: '#',
     disabled: true
   }
