@@ -132,5 +132,45 @@ export const propertyRouter = router({
 
         return { slug }
       })
+    }),
+  delete: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.transaction(async (tx) => {
+        const [property] = await tx
+          .select()
+          .from(properties)
+          .where(
+            and(
+              eq(properties.id, input),
+              eq(properties.userId, ctx.auth.userId)
+            )
+          )
+          .limit(1)
+
+        if (!property) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Property not found'
+          })
+        }
+
+        const [deleteResult] = await tx
+          .delete(properties)
+          .where(
+            and(
+              eq(properties.id, input),
+              eq(properties.userId, ctx.auth.userId)
+            )
+          )
+          .execute()
+
+        if (deleteResult.affectedRows === 0) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Property not found'
+          })
+        }
+      })
     })
 })
