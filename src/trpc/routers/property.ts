@@ -172,5 +172,94 @@ export const propertyRouter = router({
           })
         }
       })
+    }),
+  addPhotos: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        photos: z.array(z.string())
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.transaction(async (tx) => {
+        const [property] = await tx
+          .select()
+          .from(properties)
+          .where(
+            and(
+              eq(properties.id, input.id),
+              eq(properties.userId, ctx.auth.userId)
+            )
+          )
+          .limit(1)
+
+        if (!property) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Property not found'
+          })
+        }
+
+        await tx
+          .update(properties)
+          .set({
+            photos: [...property.photos, ...input.photos]
+          })
+          .where(
+            and(
+              eq(properties.id, input.id),
+              eq(properties.userId, ctx.auth.userId)
+            )
+          )
+          .execute()
+      })
+    }),
+  removePhoto: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        photo: z.string()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.transaction(async (tx) => {
+        const [property] = await tx
+          .select()
+          .from(properties)
+          .where(
+            and(
+              eq(properties.id, input.id),
+              eq(properties.userId, ctx.auth.userId)
+            )
+          )
+          .limit(1)
+
+        if (!property) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Property not found'
+          })
+        }
+
+        if (property.photos.length === 1) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'You must have at least one photo'
+          })
+        }
+
+        await tx
+          .update(properties)
+          .set({
+            photos: property.photos.filter((photo) => photo !== input.photo)
+          })
+          .where(
+            and(
+              eq(properties.id, input.id),
+              eq(properties.userId, ctx.auth.userId)
+            )
+          )
+          .execute()
+      })
     })
 })
