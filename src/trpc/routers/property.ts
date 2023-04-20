@@ -1,4 +1,7 @@
+import { TRPCError } from '@trpc/server'
+import { and, eq } from 'drizzle-orm'
 import slugify from 'slugify'
+import { z } from 'zod'
 import { properties } from '~/db/schema'
 import { createPropertySchema } from '~/trpc/schemas'
 import { protectedProcedure, router } from '~/trpc/trpc'
@@ -46,5 +49,29 @@ export const propertyRouter = router({
 
         return { slug }
       })
-    })
+    }),
+  list: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db
+      .select()
+      .from(properties)
+      .where(eq(properties.userId, ctx.auth.userId))
+  }),
+  show: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
+    const [userProperty] = await ctx.db
+      .select()
+      .from(properties)
+      .where(
+        and(eq(properties.slug, input), eq(properties.userId, ctx.auth.userId))
+      )
+      .limit(1)
+
+    if (!userProperty) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Property not found'
+      })
+    }
+
+    return userProperty
+  })
 })

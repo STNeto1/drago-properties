@@ -9,4 +9,6 @@ const poolConnection = mysql.createPool({
   database: 'drago'
 })
 
-export const db = drizzle(poolConnection)
+export const db = drizzle(poolConnection, {
+  logger: process.env.NODE_ENV === 'development'
+})

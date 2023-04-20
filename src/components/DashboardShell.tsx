@@ -55,19 +55,19 @@ const sidebarNav = [
     title: 'Published',
     href: '/dashboard/advertisements?status=published',
     icon: 'post',
-    disabled: false
+    disabled: true
   },
   {
     title: 'Pending',
     href: '/dashboard/advertisements?status=pending',
     icon: 'post',
-    disabled: false
+    disabled: true
   },
   {
     title: 'Inactive',
     href: '/dashboard/advertisements?status=inactive',
     icon: 'post',
-    disabled: false
+    disabled: true
   }
 ] as const
 

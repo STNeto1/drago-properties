@@ -52,3 +52,4 @@ export const properties = mysqlTable('properties', {
 })
 
 export type CreateProperty = InferModel<typeof properties, 'insert'>
+export type SingleProperty = InferModel<typeof properties, 'select'>
