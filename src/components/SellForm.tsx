@@ -131,7 +131,7 @@ const SellForm_1 = () => {
   }, [locationQuery, setValue])
 
   return (
-    <section className="w-1/2 mx-auto">
+    <section className="w-full lg:w-1/2 mx-auto">
       <div>
         <h3 className="mt-8 scroll-m-20 text-2xl font-semibold tracking-tight">
           Lets get started
@@ -258,7 +258,7 @@ const SellForm_1 = () => {
 
           {locationQuery.isSuccess && (
             <div className="grid grid-cols-4 gap-x-2 gap-y-6">
-              <div className="col-span-2">
+              <div className="col-span-4 lg:col-span-2">
                 <Label htmlFor="city">City</Label>
                 <Input
                   id="city"
@@ -269,7 +269,7 @@ const SellForm_1 = () => {
                 <InputErrorMessage message={errors.postalCode?.message} />
               </div>
 
-              <div className="col-span-1">
+              <div className="col-span-2 lg:col-span-1">
                 <Label htmlFor="state">State</Label>
                 <Input
                   id="state"
@@ -280,7 +280,7 @@ const SellForm_1 = () => {
                 <InputErrorMessage message={errors.state?.message} />
               </div>
 
-              <div className="col-span-1">
+              <div className="col-span-2 lg:col-span-1">
                 <Label htmlFor="district">District</Label>
                 <Input
                   id="district"
@@ -331,7 +331,7 @@ const SellForm_1 = () => {
           <FormSectionTitle>Details about the property</FormSectionTitle>
 
           <div className="grid grid-cols-4 gap-x-2 gap-y-6">
-            <div className="relative col-span-2">
+            <div className="col-span-4 md:col-span-2">
               <Label htmlFor="usefulArea">Useful Area</Label>
               <div className="flex items-center">
                 <Input
@@ -347,7 +347,7 @@ const SellForm_1 = () => {
               <InputErrorMessage message={errors.usefulArea?.message} />
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-4 md:col-span-2">
               <Label htmlFor="totalArea">Total Area</Label>
               <div className="flex items-center">
                 <Input
@@ -434,7 +434,6 @@ type SecondForm = z.infer<typeof secondFormSchema>
 
 const SellForm_2 = () => {
   const {
-    register,
     handleSubmit,
     setValue,
     formState: { errors }
@@ -467,7 +466,7 @@ const SellForm_2 = () => {
   }
 
   return (
-    <section className="w-1/2 mx-auto">
+    <section className="w-full lg:w-1/2 mx-auto">
       <div>
         <h3 className="mt-8 scroll-m-20 text-2xl font-semibold tracking-tight">
           What is the price?
@@ -480,7 +479,7 @@ const SellForm_2 = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
         <div className="grid grid-cols-3 gap-x-2 gap-y-6">
-          <div className="relative col-span-1">
+          <div className="relative col-span-3 lg:col-span-1">
             <Label htmlFor="value">
               {formData.advertisementType === 'rent' ? 'Rent' : 'Sale'} value
             </Label>
@@ -499,7 +498,7 @@ const SellForm_2 = () => {
             <InputErrorMessage message={errors.price?.message} />
           </div>
 
-          <div className="relative col-span-1">
+          <div className="relative col-span-3 lg:col-span-1">
             <Label htmlFor="condominium">Condominium</Label>
             <div className="flex items-center">
               <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
@@ -516,7 +515,7 @@ const SellForm_2 = () => {
             <InputErrorMessage message={errors.condominium?.message} />
           </div>
 
-          <div className="relative col-span-1">
+          <div className="relative col-span-3 lg:col-span-1">
             <Label htmlFor="iptu">IPTU</Label>
             <div className="flex items-center">
               <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
@@ -603,7 +602,7 @@ const SellForm_3 = () => {
   }
 
   return (
-    <section className="w-1/2 mx-auto">
+    <section className="w-full lg:w-1/2 mx-auto">
       <div>
         <h3 className="mt-8 scroll-m-20 text-2xl font-semibold tracking-tight">
           Now add some photos
@@ -641,7 +640,7 @@ const SellForm_3 = () => {
 
         <ul
           role="list"
-          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
+          className="grid grid-cols-1 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
         >
           {imagePreviews.map((file, idx) => (
             <li key={file} className="relative">

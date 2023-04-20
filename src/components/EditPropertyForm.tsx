@@ -189,7 +189,7 @@ const EditForm: FC<EditFormProps> = (props) => {
       </div>
 
       <div className="grid grid-cols-3 gap-x-2 gap-y-6">
-        <div className="relative col-span-1">
+        <div className="relative col-span-3 lg:col-span-1">
           <Label htmlFor="value">
             {props.advertisementType === 'rent' ? 'Rent' : 'Sale'} value
           </Label>
@@ -208,7 +208,7 @@ const EditForm: FC<EditFormProps> = (props) => {
           <InputErrorMessage message={errors.price?.message} />
         </div>
 
-        <div className="relative col-span-1">
+        <div className="relative col-span-3 lg:col-span-1">
           <Label htmlFor="condominium">Condominium</Label>
           <div className="flex items-center">
             <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
@@ -225,7 +225,7 @@ const EditForm: FC<EditFormProps> = (props) => {
           <InputErrorMessage message={errors.condominium?.message} />
         </div>
 
-        <div className="relative col-span-1">
+        <div className="relative col-span-3 lg:col-span-1">
           <Label htmlFor="iptu">IPTU</Label>
           <div className="flex items-center">
             <span className="inline-flex items-center px-2 h-10 rounded-l-md border border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
@@ -337,7 +337,7 @@ const EditMedias: React.FC<EditMediasProps> = (props) => {
 
         <ul
           role="list"
-          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
+          className="grid grid-cols-1 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
         >
           {imagePreviews.map((file, idx) => (
             <li key={file} className="relative">
@@ -398,7 +398,7 @@ const EditMedias: React.FC<EditMediasProps> = (props) => {
       <div className="pt-4">
         <ul
           role="list"
-          className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
+          className="grid grid-cols-1 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:gap-x-8 mt-4"
         >
           {props.photos.map((url) => (
             <li key={url} className="relative">
