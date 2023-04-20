@@ -58,12 +58,6 @@ const sidebarNav = [
     disabled: true
   },
   {
-    title: 'Pending',
-    href: '/dashboard/advertisements?status=pending',
-    icon: 'post',
-    disabled: true
-  },
-  {
     title: 'Inactive',
     href: '/dashboard/advertisements?status=inactive',
     icon: 'post',

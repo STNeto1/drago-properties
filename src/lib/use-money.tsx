@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-export const useMoney = () => {
-  const [value, setValue] = useState('0')
+export const useMoney = (initialValue?: number | null) => {
+  const [value, setValue] = useState((initialValue ?? 0).toString())
 
   const cleanStrValue = +value.replace(/\D+/g, '')
   const intlValue = new Intl.NumberFormat('en-US', {

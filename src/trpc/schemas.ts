@@ -29,3 +29,15 @@ export const createPropertySchema = z.object({
 
   photos: z.array(z.string())
 })
+
+export const updatePropertySchema = z.object({
+  advertisementType: z.enum(properties.advertisementType.enumValues),
+  propertyType: z.enum(properties.propertyType.enumValues),
+
+  title: z.string(),
+  description: z.string(),
+
+  price: z.number(),
+  condominium: z.number(),
+  iptu: z.number()
+})

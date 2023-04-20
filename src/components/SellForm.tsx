@@ -40,7 +40,7 @@ export const SellForm = () => {
   )
 }
 
-const propertyTypes: Array<{
+export const propertyTypes: Array<{
   id: typeof properties.propertyType.enumValues[number]
   name: string
 }> = [
@@ -203,6 +203,7 @@ const SellForm_1 = () => {
               <Textarea
                 id="description"
                 placeholder="Describe the property in a few words"
+                className="h-56"
                 {...register('description')}
               />
               <InputErrorMessage message={errors.description?.message} />
@@ -697,7 +698,7 @@ const SellForm_3 = () => {
   )
 }
 
-const FormSectionTitle = (props: { children: ReactNode }) => {
+export const FormSectionTitle = (props: { children: ReactNode }) => {
   return (
     <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
       {props.children}
