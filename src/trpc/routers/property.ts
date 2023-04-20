@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import slugify from 'slugify'
 import { z } from 'zod'
 import { properties } from '~/db/schema'
@@ -54,14 +54,23 @@ export const propertyRouter = router({
     return await ctx.db
       .select()
       .from(properties)
-      .where(eq(properties.userId, ctx.auth.userId))
+      .where(
+        and(
+          eq(properties.userId, ctx.auth.userId),
+          isNull(properties.deletedAt)
+        )
+      )
   }),
   show: protectedProcedure.input(z.string()).query(async ({ input, ctx }) => {
     const [userProperty] = await ctx.db
       .select()
       .from(properties)
       .where(
-        and(eq(properties.slug, input), eq(properties.userId, ctx.auth.userId))
+        and(
+          eq(properties.slug, input),
+          eq(properties.userId, ctx.auth.userId),
+          isNull(properties.deletedAt)
+        )
       )
       .limit(1)
 
@@ -84,7 +93,8 @@ export const propertyRouter = router({
           .where(
             and(
               eq(properties.id, input.id),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .limit(1)
@@ -118,7 +128,8 @@ export const propertyRouter = router({
           .where(
             and(
               eq(properties.id, input.id),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .execute()
@@ -143,7 +154,8 @@ export const propertyRouter = router({
           .where(
             and(
               eq(properties.id, input),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .limit(1)
@@ -156,11 +168,15 @@ export const propertyRouter = router({
         }
 
         const [deleteResult] = await tx
-          .delete(properties)
+          .update(properties)
+          .set({
+            deletedAt: new Date()
+          })
           .where(
             and(
               eq(properties.id, input),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .execute()
@@ -188,7 +204,8 @@ export const propertyRouter = router({
           .where(
             and(
               eq(properties.id, input.id),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .limit(1)
@@ -229,7 +246,8 @@ export const propertyRouter = router({
           .where(
             and(
               eq(properties.id, input.id),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .limit(1)
@@ -256,7 +274,8 @@ export const propertyRouter = router({
           .where(
             and(
               eq(properties.id, input.id),
-              eq(properties.userId, ctx.auth.userId)
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
             )
           )
           .execute()

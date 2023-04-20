@@ -48,7 +48,8 @@ export const properties = mysqlTable('properties', {
 
   userId: varchar('user_id', { length: 36 }).notNull(),
 
-  createdAt: timestamp('created_at', { fsp: 2 }).notNull().defaultNow()
+  createdAt: timestamp('created_at', { fsp: 2 }).notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at', { fsp: 2 })
 })
 
 export type CreateProperty = InferModel<typeof properties, 'insert'>

@@ -1,0 +1,1 @@
+ALTER TABLE properties ADD `deleted_at` timestamp(2);
