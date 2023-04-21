@@ -24,7 +24,7 @@ specifiers:
   autoprefixer: 10.4.14
   class-variance-authority: ^0.5.2
   clsx: ^1.2.1
-  drizzle-kit: 0.17.5
+  drizzle-kit: 0.17.1-609a4f0
   drizzle-orm: ^0.24.4
   eslint: 8.39.0
   eslint-config-next: 13.3.0
@@ -88,7 +88,7 @@ dependencies:
 
 devDependencies:
   '@tailwindcss/aspect-ratio': 0.4.2_tailwindcss@3.3.1
-  drizzle-kit: 0.17.5
+  drizzle-kit: 0.17.1-609a4f0
 
 packages:
 
@@ -2683,8 +2683,8 @@ packages:
       wordwrap: 1.0.0
     dev: true
 
-  /drizzle-kit/0.17.5:
-    resolution: {integrity: sha512-oS4qG3d4m7RUHqdhPZSjYh6QSarxbHKyalBeW1cBpJp2F5DB5xvEan6qfaKdasYkI10DNdPuvXcZOR31tiRIGA==}
+  /drizzle-kit/0.17.1-609a4f0:
+    resolution: {integrity: sha512-bXflv8YQPe8gE+OSqllxVJEiwzupHjzu6tcBqfO4avrlspiP3shFJfDuHeiv+ztpKcG+8KXAuuFRIplJtD89LA==}
     hasBin: true
     dependencies:
       camelcase: 7.0.1
@@ -2695,6 +2695,7 @@ packages:
       glob: 8.1.0
       hanji: 0.0.5
       json-diff: 0.9.0
+      minimatch: 7.4.6
       zod: 3.21.4
     transitivePeerDependencies:
       - supports-color
@@ -4131,6 +4132,13 @@ packages:
 
   /minimatch/5.1.6:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: true
+
+  /minimatch/7.4.6:
+    resolution: {integrity: sha512-sBz8G/YjVniEz6lKPNpKxXwazJe4c19fEfV2GDMX6AjFz+MX9uDWIZW8XreVhkFW3fkIdTv/gxWr/Kks5FFAVw==}
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
