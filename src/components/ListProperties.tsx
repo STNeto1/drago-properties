@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
 import {
   AlertDialog,
@@ -22,7 +21,7 @@ import {
 } from '~/components/DropdownMenu'
 import { Icons } from '~/components/Icons'
 import { SingleProperty } from '~/db/schema'
-import { formatDate } from '~/lib/utils'
+import { cn, formatDate } from '~/lib/utils'
 import { trpc } from '~/trpc/client'
 
 type Props = {
@@ -48,17 +47,28 @@ export const ListProperties: FC<Props> = ({ status }) => {
 type ItemProps = SingleProperty
 
 const Item: FC<ItemProps> = (props) => {
-  const router = useRouter()
+  const utils = trpc.useContext()
+
   const [showDeleteAlert, setShowDeleteAlert] = useState<boolean>(false)
 
+  const changePropertyStatusMutation = trpc.property.changeStatus.useMutation({
+    onSuccess: async () => {
+      await utils.property.list.invalidate()
+    }
+  })
   const deletePropertyMutation = trpc.property.delete.useMutation({
-    onSuccess: () => {
-      router.refresh()
+    onSuccess: async () => {
+      await utils.property.list.invalidate()
     }
   })
 
   return (
-    <div className="flex items-center justify-between p-4">
+    <div
+      className={cn('flex items-center justify-between p-4', {
+        'bg-green-100 bg-opacity-75': props.active,
+        'bg-gray-100 bg-opacity-50': !props.active
+      })}
+    >
       <div className="grid gap-1">
         <Link href={`/${props.slug}`} className="font-semibold hover:underline">
           {props.title}
@@ -75,7 +85,19 @@ const Item: FC<ItemProps> = (props) => {
           <Icons.ellipsis className="h-4 w-4" />
           <span className="sr-only">Open</span>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            className="flex cursor-pointer items-center text-gray-600 focus:bg-gray-50"
+            onSelect={() => {
+              changePropertyStatusMutation.mutate({
+                id: props.id
+              })
+            }}
+          >
+            {props.active ? 'Deactivate' : 'Activate'}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link
               href={`/dashboard/advertisements/${props.slug}`}

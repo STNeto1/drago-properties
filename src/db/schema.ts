@@ -1,5 +1,6 @@
 import { InferModel } from 'drizzle-orm'
 import {
+  boolean,
   float,
   int,
   json,
@@ -47,6 +48,8 @@ export const properties = mysqlTable('properties', {
   photos: json('photos').$type<string[]>().notNull(),
 
   userId: varchar('user_id', { length: 36 }).notNull(),
+
+  active: boolean('active').notNull().default(true),
 
   createdAt: timestamp('created_at', { fsp: 2 }).notNull().defaultNow(),
   deletedAt: timestamp('deleted_at', { fsp: 2 })

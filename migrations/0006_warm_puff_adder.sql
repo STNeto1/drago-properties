@@ -1,0 +1,1 @@
+ALTER TABLE properties ADD `active` boolean DEFAULT true NOT NULL;

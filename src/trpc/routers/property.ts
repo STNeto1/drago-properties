@@ -280,5 +280,47 @@ export const propertyRouter = router({
           )
           .execute()
       })
+    }),
+  changeStatus: protectedProcedure
+    .input(
+      z.object({
+        id: z.number()
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.transaction(async (tx) => {
+        const [property] = await tx
+          .select()
+          .from(properties)
+          .where(
+            and(
+              eq(properties.id, input.id),
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
+            )
+          )
+          .limit(1)
+
+        if (!property) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Property not found'
+          })
+        }
+
+        await tx
+          .update(properties)
+          .set({
+            active: !property.active
+          })
+          .where(
+            and(
+              eq(properties.id, input.id),
+              eq(properties.userId, ctx.auth.userId),
+              isNull(properties.deletedAt)
+            )
+          )
+          .execute()
+      })
     })
 })
