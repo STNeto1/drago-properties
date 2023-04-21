@@ -87,6 +87,16 @@ const Item: FC<ItemProps> = (props) => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
+          {props.active && (
+            <>
+              <DropdownMenuItem>
+                <Link href={`/${props.slug}`} className="flex w-full">
+                  Access
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuItem
             className="flex cursor-pointer items-center text-gray-600 focus:bg-gray-50"
             onSelect={() => {

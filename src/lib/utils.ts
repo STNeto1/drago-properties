@@ -13,3 +13,22 @@ export function formatDate(input: string | number): string {
     year: 'numeric'
   })
 }
+
+export function formatPublishedAt(input: Date): string {
+  const date = new Date(input)
+
+  return `Published in ${date.toLocaleDateString('en-US', {
+    day: '2-digit',
+    month: 'numeric'
+  })} at ${date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric'
+  })}`
+}
+
+export function formatCurrency(input: number): string {
+  return input.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  })
+}
